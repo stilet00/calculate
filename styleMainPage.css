@@ -1,3 +1,6 @@
+h1 {
+  text-align: center; }
+
 p {
   margin: 0; }
 
@@ -13,8 +16,13 @@ p {
   padding: 20px;
   margin: 0; }
   .container input {
+    padding: 10px;
+    border-radius: 10px;
     margin: 20px;
     width: 250px; }
+    .container input:focus {
+      border: none;
+      outline: none; }
   .container .button-main {
     width: 150px;
     box-sizing: border-box;
@@ -45,7 +53,40 @@ p {
       margin-top: 10px;
       margin-bottom: 10px; }
 
+.btn-secondary {
+  background: #00BFFF !important; }
+
 .button-active {
-  background: lightblue !important; }
+  background: #ff9a62 !important; }
+
+.border {
+  list-style: none;
+  padding: 0; }
+
+ul {
+  margin-left: 0;
+  list-style: none;
+  counter-reset: li; }
+
+.bullet li {
+  box-sizing: border-box;
+  border: 3px solid #00BFFF;
+  padding: 2px;
+  margin: 10px;
+  border-radius: 4px;
+  background: #FEFEFE;
+  color: #231F20; }
+.bullet .bullet li:before {
+  position: absolute;
+  top: -0.7em;
+  padding-left: 0.4em;
+  padding-right: 0.4em;
+  font-size: 16px;
+  font-weight: bold;
+  color: #DCC24B;
+  background: #FEFEFE;
+  border-radius: 50%;
+  counter-increment: li;
+  content: counter(li); }
 
 /*# sourceMappingURL=styleMainPage.css.map */
