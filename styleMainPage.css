@@ -25,15 +25,13 @@ p {
     margin-bottom: 20px; }
     .container .button-main:nth-child(2) {
       height: 200px; }
-  .container .button-active {
-    background: lightblue; }
-    .container .button-active p {
+    .container .button-main p {
       font-weight: 800; }
-    .container .button-active select {
+    .container .button-main select {
       margin-top: 5px;
       margin-bottom: 5px;
       height: 20px; }
-    .container .button-active:nth-child(3) {
+    .container .button-main:nth-child(3) {
       height: 180px; }
   .container .menu {
     height: 500px;
@@ -44,5 +42,8 @@ p {
       padding: 2px;
       margin-top: 10px;
       margin-bottom: 10px; }
+
+.button-active {
+  background: lightblue !important; }
 
 /*# sourceMappingURL=styleMainPage.css.map */
