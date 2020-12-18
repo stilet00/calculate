@@ -1,20 +1,102 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const buttonCollection = document.querySelectorAll('button');
-    const div = document.querySelector('.menu')
-    function setButtonsId() {
-        for (let i = 0; i < buttonCollection.length; i++) {
-            buttonCollection[i].setAttribute('id', i);
+class View {
+    constructor() {
+        this.buttonCollection = document.querySelectorAll('button');
+        this.info = document.querySelector('.info');
+        this.container = document.querySelector('.container');
+        this.ul = document.createElement('ul');
+    }
+    pictureTranslatorPage = (item) => {
+            this.info.append(this.ul);
+            const translator = document.createElement('li');
+            translator.innerHTML = item;
+            this.ul.append(translator);
+        }
+    setButtonsId() {
+        for (let i = 0; i < this.buttonCollection.length; i++) {
+            this.buttonCollection[i].setAttribute('id', i);
         }
     }
-    function buttonPressed(event) {
-        if (event.target.tagName === 'BUTTON') {
-            for (let i = 0; i < buttonCollection.length; i++) {
-                buttonCollection[i].classList.remove(`button-active`);
+    buttonPressed = (event) => {
+            for (let i = 0; i < this.buttonCollection.length; i++) {
+                this.buttonCollection[i].classList.remove(`button-active`);
             }
             event.target.classList.toggle('button-active');
+
+        }
+    addTranslator = () => {
+        this.clearField();
+        const input = document.createElement('input');
+        const input2 = document.createElement('input');
+        const button = document.createElement('button');
+        const button2 = document.createElement('button');
+        input.setAttribute('placeholder', 'Введите фамилию переводчика');
+        input2.setAttribute('placeholder', 'Введите фамилию клиентки');
+        button.setAttribute('id', 'addTranslator');
+        button2.setAttribute('id', 'addClient');
+        button.innerText = 'Добавить переводчика';
+        button2.innerText = 'Добавить клиентку';
+        this.info.append(input);
+        this.info.append(button);
+        this.info.append(input2);
+        this.info.append(button2);
+    }
+    clearField() {
+        this.info.innerHTML = '';
+        this.ul.innerHTML = '';
+    }
+    clearInput(input) {
+        input.value = '';
+    }
+}
+class Model {
+    constructor(view) {
+        this.view = view;
+        this.translatorsList = [];
+        this.clientList = [];
+    }
+    setTranslatorList(item) {
+        this.translatorsList.push(item);
+    }
+    setClientList(item) {
+        this.clientList.push(item);
+    }
+    giveTranslatorList = () => {
+
+        this.view.clearField();
+        this.translatorsList.forEach((item) => {
+            this.view.pictureTranslatorPage(item);
+        });
+    }
+}
+class Controller {
+    constructor(model) {
+        this.model = model;
+    }
+    click = (event) => {
+        if (event.target.tagName === 'BUTTON') {
+            switch (event.target.id) {
+                case '1' :
+                    this.model.view.buttonPressed(event);
+                    this.model.giveTranslatorList(event);
+                    break;
+                case '2' :
+                    this.model.view.buttonPressed(event);
+                    this.model.view.addTranslator();
+                    break;
+                case 'addTranslator' :
+                    this.model.setTranslatorList(document.querySelector('#addTranslator').previousSibling.value);
+                    this.model.view.clearInput(document.querySelector('#addTranslator').previousSibling);
+            }
         }
     }
-    setButtonsId();
-    div.addEventListener('click', buttonPressed);
+}
+let view = new View;
+let model = new Model(view);
+let controller = new Controller(model);
+view.setButtonsId();
+view.container.addEventListener('click', controller.click);
+
+
 
 })

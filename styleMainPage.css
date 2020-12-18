@@ -1,18 +1,20 @@
 p {
   margin: 0; }
 
+.info {
+  width: 700px; }
+  .info button {
+    width: 200px; }
+
 .container {
   height: 100vh;
   display: flex;
   background: #f7f8fc;
   padding: 20px;
   margin: 0; }
-  .container .buttons {
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    display: none; }
+  .container input {
+    margin: 20px;
+    width: 250px; }
   .container .button-main {
     width: 150px;
     box-sizing: border-box;
@@ -33,11 +35,11 @@ p {
       height: 20px; }
     .container .button-main:nth-child(3) {
       height: 180px; }
-  .container .menu {
+  .container .buttons {
     height: 500px;
     width: 50%;
     flex-direction: column; }
-    .container .menu button {
+    .container .buttons button {
       height: 50px;
       padding: 2px;
       margin-top: 10px;
