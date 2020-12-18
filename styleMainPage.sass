@@ -1,0 +1,46 @@
+p
+  margin: 0
+.container
+  height: 100vh
+  display: flex
+  background: rgb(247, 248, 252)
+  padding: 20px
+  margin: 0
+  .buttons
+    width: 50%
+    display: flex
+    flex-direction: column
+    align-items: center
+    display: none
+  .button-main
+    width: 150px
+    box-sizing: border-box
+    border-radius: 5px
+    padding: 10px
+    height: 180px
+    display: flex
+    flex-direction: column
+    justify-content: space-evenly
+    margin-bottom: 20px
+    &:nth-child(2)
+      height: 200px
+  .button-active
+    background: lightblue;
+    p
+      font-weight: 800
+    select
+      margin-top: 5px
+      margin-bottom: 5px
+      height: 20px
+    &:nth-child(3)
+      height: 180px
+  .menu
+    height: 500px
+    width: 50%
+    flex-direction: column
+    button
+      height: 50px
+      padding: 2px
+      margin:
+        top: 10px
+        bottom: 10px
