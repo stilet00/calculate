@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.target.classList.toggle('button-active');
 
             }
-        addTranslator = () => {
+        addTranslatorMenu = () => {
             const input = document.createElement('input');
             const input2 = document.createElement('input');
             const button = document.createElement('button');
@@ -74,15 +74,21 @@ document.addEventListener('DOMContentLoaded', function() {
             this.translatorsList = [];
             this.clientList = [];
         }
-        setTranslatorList() {
+        saveTranslator() {
             let trans = Model.createObject(Translator, document.querySelector('#addTranslator').previousSibling.value);
             this.translatorsList.push(trans);
         }
-        setClientList(item) {
-            this.clientList.push(item);
+        saveClient() {
+            let client = Model.createObject(Translator, document.querySelector('#addClient').previousSibling.value);
+            this.clientList.push(client);
         }
         giveTranslatorList = () => {
             this.translatorsList.forEach((item) => {
+                this.view.pictureTranslatorPage(item.name);
+            });
+        }
+        giveClientList = () => {
+            this.clientList.forEach((item) => {
                 this.view.pictureTranslatorPage(item.name);
             });
         }
@@ -108,19 +114,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 switch (event.target.id) {
                     case '1' :
                         this.model.view.buttonPressed(event);
-                        this.model.giveTranslatorList(event);
+                        this.model.view.addTranslatorMenu();
                         break;
                     case '2' :
                         this.model.view.buttonPressed(event);
-                        this.model.view.addTranslator();
+                        this.model.giveTranslatorList(event);
+                        break;
+                    case '3' :
+                        this.model.view.buttonPressed(event);
+                        this.model.giveClientList(event);
                         break;
                     case '5' :
                         this.model.view.buttonPressed(event);
                         this.model.getCurrency();
                         break;
                     case 'addTranslator' :
-                        this.model.setTranslatorList();
+                        this.model.saveTranslator();
                         this.model.view.clearInput(document.querySelector('#addTranslator').previousSibling);
+                        break;
+                    case 'addClient' :
+                        this.model.saveClient();
+                        this.model.view.clearInput(document.querySelector('#addClient').previousSibling);
+                        break;
 
                 }
 
