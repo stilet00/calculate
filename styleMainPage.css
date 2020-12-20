@@ -45,7 +45,7 @@ p {
       height: 180px; }
   .container .buttons {
     height: 500px;
-    width: 50%;
+    width: 40%;
     flex-direction: column; }
     .container .buttons button {
       height: 50px;
@@ -69,6 +69,7 @@ ul {
   counter-reset: li; }
 
 .bullet li {
+  text-align: center;
   box-sizing: border-box;
   border: 3px solid #00BFFF;
   padding: 2px;

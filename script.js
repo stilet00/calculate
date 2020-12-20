@@ -16,18 +16,26 @@ document.addEventListener('DOMContentLoaded', function() {
             this.ul = document.createElement('ul');
             this.ul.classList.add('bullet');
         }
+        // Методы прорисовки таблиц требуют объединения
         pictureTranslatorPage = (item) => {
                 this.info.append(this.ul);
                 const translator = document.createElement('li');
                 translator.innerHTML = item;
                 this.ul.append(translator);
             }
+        pictureCurrencyPage = (item) => {
+            this.info.append(this.ul);
+            const currency = document.createElement('li');
+            currency.innerHTML = item;
+            this.ul.append(currency);
+        }
         setButtonsId() {
             for (let i = 0; i < this.buttonCollection.length; i++) {
                 this.buttonCollection[i].setAttribute('id', i);
             }
         }
         buttonPressed = (event) => {
+                this.clearField();
                 for (let i = 0; i < this.buttonCollection.length; i++) {
                     this.buttonCollection[i].classList.remove(`button-active`);
                 }
@@ -35,7 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             }
         addTranslator = () => {
-            this.clearField();
             const input = document.createElement('input');
             const input2 = document.createElement('input');
             const button = document.createElement('button');
@@ -63,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     class Model {
         constructor(view) {
-            this.view = view;
+            this.view= view;
             this.translatorsList = [];
             this.clientList = [];
         }
@@ -75,15 +82,22 @@ document.addEventListener('DOMContentLoaded', function() {
             this.clientList.push(item);
         }
         giveTranslatorList = () => {
-
-            this.view.clearField();
             this.translatorsList.forEach((item) => {
                 this.view.pictureTranslatorPage(item.name);
             });
         }
+        getCurrency() {
+            let promise = fetch("https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5");
+            promise
+                .then(success => success.json())
+                .then(obj => obj.forEach(item => {
+                    this.view.pictureCurrencyPage(`${item.ccy} / ${item.base_ccy} = ${item.buy} / ${item.sale}`);
+                }));
+        }
         static createObject = (className, name) => {
             return new className(name);
         }
+
     }
     class Controller {
         constructor(model) {
@@ -100,10 +114,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.model.view.buttonPressed(event);
                         this.model.view.addTranslator();
                         break;
+                    case '5' :
+                        this.model.view.buttonPressed(event);
+                        this.model.getCurrency();
+                        break;
                     case 'addTranslator' :
                         this.model.setTranslatorList();
                         this.model.view.clearInput(document.querySelector('#addTranslator').previousSibling);
+
                 }
+
             }
         }
     }
