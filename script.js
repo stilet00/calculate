@@ -10,17 +10,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     class View {
         constructor() {
-            this.buttonCollection = document.querySelectorAll('button');
+            this.buttonCollection = document.querySelectorAll('button')
             this.info = document.querySelector('.info');
             this.container = document.querySelector('.container');
             this.ul = document.createElement('ul');
             this.ul.classList.add('bullet');
         }
         // Методы прорисовки таблиц требуют объединения
-        pictureTranslatorPage = (item) => {
+        pictureTranslatorPage = (item, index) => {
                 this.info.append(this.ul);
                 const translator = document.createElement('li');
+                const buttonDetails = document.createElement('button');
+                const buttonDelete = document.createElement('button');
+                translator.id = index;
+                buttonDetails.innerText = 'Подробнее';
+                buttonDelete.innerText = 'Удалить';
+                buttonDetails.classList.add('btn', 'btn-secondary');
+                buttonDelete.classList.add('btn', 'btn-secondary');
+                translator.classList.add('objList');
                 translator.innerHTML = item;
+                translator.append(buttonDetails, buttonDelete);
                 this.ul.append(translator);
             }
         pictureCurrencyPage = (item) => {
@@ -28,11 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const currency = document.createElement('li');
             currency.innerHTML = item;
             this.ul.append(currency);
-        }
-        setButtonsId() {
-            for (let i = 0; i < this.buttonCollection.length; i++) {
-                this.buttonCollection[i].setAttribute('id', i);
-            }
         }
         buttonPressed = (event) => {
                 this.clearField();
@@ -83,8 +87,8 @@ document.addEventListener('DOMContentLoaded', function() {
             this.clientList.push(client);
         }
         giveTranslatorList = () => {
-            this.translatorsList.forEach((item) => {
-                this.view.pictureTranslatorPage(item.name);
+            this.translatorsList.forEach((item, index) => {
+                this.view.pictureTranslatorPage(item.name, index);
             });
         }
         giveClientList = () => {
@@ -100,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.view.pictureCurrencyPage(`${item.ccy} / ${item.base_ccy} = ${item.buy} / ${item.sale}`);
                 }));
         }
+
         static createObject = (className, name) => {
             return new className(name);
         }
@@ -112,19 +117,19 @@ document.addEventListener('DOMContentLoaded', function() {
         click = (event) => {
             if (event.target.tagName === 'BUTTON') {
                 switch (event.target.id) {
-                    case '1' :
+                    case 'addObj' :
                         this.model.view.buttonPressed(event);
                         this.model.view.addTranslatorMenu();
                         break;
-                    case '2' :
+                    case 'transl' :
                         this.model.view.buttonPressed(event);
                         this.model.giveTranslatorList(event);
                         break;
-                    case '3' :
+                    case 'clients' :
                         this.model.view.buttonPressed(event);
                         this.model.giveClientList(event);
                         break;
-                    case '5' :
+                    case 'currency' :
                         this.model.view.buttonPressed(event);
                         this.model.getCurrency();
                         break;
@@ -145,7 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let view = new View;
     let model = new Model(view);
     let controller = new Controller(model);
-    view.setButtonsId();
     view.container.addEventListener('click', controller.click);
 
 

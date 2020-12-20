@@ -65,6 +65,7 @@ ul
 
 .bullet
   li
+    position: relative
     text-align: center
     box-sizing: border-box
     border: 3px solid #00BFFF
@@ -73,7 +74,22 @@ ul
     border-radius: 4px
     background: #FEFEFE
     color: #231F20
+    button
+      position: absolute
+      right: 5px
+      height: 25px
+      width: 100px
+      top: 16px
+      padding: 0
+      font-size: 15px
+      box-sizing: border-box
+      &:first-child
+        right: 110px
+      &:last-child
+        background: red !important
 
+  .objList
+    margin-bottom: 20px
   .bullet li:before
     position: absolute
     top: -0.7em

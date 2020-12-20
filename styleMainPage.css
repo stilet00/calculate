@@ -69,6 +69,7 @@ ul {
   counter-reset: li; }
 
 .bullet li {
+  position: relative;
   text-align: center;
   box-sizing: border-box;
   border: 3px solid #00BFFF;
@@ -77,6 +78,21 @@ ul {
   border-radius: 4px;
   background: #FEFEFE;
   color: #231F20; }
+  .bullet li button {
+    position: absolute;
+    right: 5px;
+    height: 25px;
+    width: 100px;
+    top: 16px;
+    padding: 0;
+    font-size: 15px;
+    box-sizing: border-box; }
+    .bullet li button:first-child {
+      right: 110px; }
+    .bullet li button:last-child {
+      background: red !important; }
+.bullet .objList {
+  margin-bottom: 20px; }
 .bullet .bullet li:before {
   position: absolute;
   top: -0.7em;
