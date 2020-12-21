@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
         constructor(name) {
             this.name = name;
             this.clients = [];
-            this.cardNumber;
+            this.cardNumber = 0;
 
         }
 
@@ -12,26 +12,63 @@ document.addEventListener('DOMContentLoaded', function() {
         constructor() {
             this.buttonCollection = document.querySelectorAll('button')
             this.info = document.querySelector('.info');
-            this.container = document.querySelector('.container');
+            this.buttons = document.querySelector('.buttons');
             this.ul = document.createElement('ul');
+            this.ul2 = document.createElement('ul');
             this.ul.classList.add('bullet');
+
         }
         // Методы прорисовки таблиц требуют объединения
         pictureTranslatorPage = (item, index) => {
-                this.info.append(this.ul);
-                const translator = document.createElement('li');
-                const buttonDetails = document.createElement('button');
-                const buttonDelete = document.createElement('button');
-                translator.id = index;
-                buttonDetails.innerText = 'Подробнее';
-                buttonDelete.innerText = 'Удалить';
-                buttonDetails.classList.add('btn', 'btn-secondary');
-                buttonDelete.classList.add('btn', 'btn-secondary');
-                translator.classList.add('objList');
-                translator.innerHTML = item;
-                translator.append(buttonDetails, buttonDelete);
-                this.ul.append(translator);
+            this.info.append(this.ul);
+            const translator = document.createElement('li');
+            const buttonDetails = document.createElement('button');
+            const buttonDelete = document.createElement('button');
+            translator.id = index;
+            buttonDetails.innerText = 'Подробнее';
+            buttonDetails.setAttribute('name', 'details');
+            buttonDelete.setAttribute('name', 'delete');
+            buttonDelete.innerText = 'Удалить';
+            buttonDetails.classList.add('btn', 'btn-secondary');
+            buttonDelete.classList.add('btn', 'btn-secondary');
+            translator.classList.add('objList');
+            translator.innerHTML = item;
+            translator.append(buttonDetails, buttonDelete);
+            this.ul.append(translator);
             }
+        pictureDetails (object, id) {
+            this.clearField();
+            const table = document.createElement('table');
+            const buttonEdit = document.createElement('button');
+            const buttonSave = document.createElement('button');
+            buttonEdit.innerHTML = 'Редактировать';
+            buttonSave.innerHTML = 'Сохранить';
+            buttonEdit.classList.add('btn', 'btn-secondary');
+            buttonSave.classList.add('btn', 'btn-secondary');
+            table.classList.add('objectDetails');
+            table.id = id;
+            const menu1 = document.createElement('tr');
+            const menu2 = document.createElement('tr');
+            const subMenu1 = document.createElement('th');
+            const subMenu2 = document.createElement('th');
+            const subMenu3 = document.createElement('th');
+            const subMenu4 = document.createElement('td');
+            const subMenu5 = document.createElement('td');
+            const subMenu6 = document.createElement('td');
+            subMenu1.innerHTML = 'Имя переводчика';
+            subMenu2.innerHTML = 'Прикрепленные клиентки';
+            subMenu3.innerHTML = 'Номер карты';
+            subMenu4.innerHTML = object.name;
+            subMenu5.innerHTML = object.clients;
+            subMenu6.innerHTML = object.cardNumber;
+            this.info.append(table, buttonEdit, buttonSave);
+            table.append(menu1, menu2);
+            menu1.append(subMenu1, subMenu2, subMenu3);
+            menu2.append(subMenu4, subMenu5, subMenu6);
+
+
+
+        }
         pictureCurrencyPage = (item) => {
             this.info.append(this.ul);
             const currency = document.createElement('li');
@@ -68,41 +105,58 @@ document.addEventListener('DOMContentLoaded', function() {
             this.info.innerHTML = '';
             this.ul.innerHTML = '';
         }
+        clearUl() {
+            this.ul2.innerHTML = '';
+        }
+
         clearInput(input) {
             input.value = '';
         }
     }
     class Model {
-        constructor(view) {
+        constructor (view) {
             this.view= view;
             this.translatorsList = [];
             this.clientList = [];
         }
-        saveTranslator() {
+        saveTranslator () {
             let trans = Model.createObject(Translator, document.querySelector('#addTranslator').previousSibling.value);
             this.translatorsList.push(trans);
         }
-        saveClient() {
+        deleteTranslator (id) {
+          this.translatorsList.splice(id, 1);
+          this.giveTranslatorList();
+        }
+        saveClient () {
             let client = Model.createObject(Translator, document.querySelector('#addClient').previousSibling.value);
             this.clientList.push(client);
         }
-        giveTranslatorList = () => {
+        giveTranslatorList () {
             this.translatorsList.forEach((item, index) => {
                 this.view.pictureTranslatorPage(item.name, index);
             });
         }
-        giveClientList = () => {
+        giveTranslatorDetails (id) {
+                this.view.pictureDetails(this.translatorsList[id], id);
+        }
+        giveClientList () {
             this.clientList.forEach((item) => {
                 this.view.pictureTranslatorPage(item.name);
             });
         }
-        getCurrency() {
+        getCurrency () {
             let promise = fetch("https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5");
             promise
                 .then(success => success.json())
-                .then(obj => obj.forEach(item => {
-                    this.view.pictureCurrencyPage(`${item.ccy} / ${item.base_ccy} = ${item.buy} / ${item.sale}`);
-                }));
+                .then(obj => {
+                    for (let i = 0; i <= 2; i++) {
+                        if (i === 2) {
+                            this.view.pictureCurrencyPage(`Курс payoneer равен ${obj[0].buy - 1}`);
+                        } else {
+                        this.view.pictureCurrencyPage(`${obj[i].ccy} / ${obj[i].base_ccy} = ${obj[i].buy} / ${obj[i].sale}`);
+                        }
+                        }
+                        })
         }
 
         static createObject = (className, name) => {
@@ -114,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
         constructor(model) {
             this.model = model;
         }
-        click = (event) => {
+        clickButtons = (event) => {
             if (event.target.tagName === 'BUTTON') {
                 switch (event.target.id) {
                     case 'addObj' :
@@ -133,6 +187,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.model.view.buttonPressed(event);
                         this.model.getCurrency();
                         break;
+
+                }
+            }
+        }
+        clickInfo = (event) => {
+            if (event.target.tagName === 'BUTTON') {
+                switch (event.target.id) {
                     case 'addTranslator' :
                         this.model.saveTranslator();
                         this.model.view.clearInput(document.querySelector('#addTranslator').previousSibling);
@@ -141,7 +202,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.model.saveClient();
                         this.model.view.clearInput(document.querySelector('#addClient').previousSibling);
                         break;
-
+                }
+                switch (event.target.getAttribute('name')) {
+                    case 'delete' :
+                        this.model.view.buttonPressed(event);
+                        this.model.deleteTranslator(event.target.parentNode.id);
+                        break;
+                    case 'details' :
+                        this.model.view.clearUl();
+                        this.model.giveTranslatorDetails(event.target.parentNode.id, event.target   );
+                        break;
                 }
 
             }
@@ -150,7 +220,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let view = new View;
     let model = new Model(view);
     let controller = new Controller(model);
-    view.container.addEventListener('click', controller.click);
+    view.buttons.addEventListener('click', controller.clickButtons);
+    view.info.addEventListener('click', controller.clickInfo);
 
 
 
