@@ -8,7 +8,8 @@ p {
   padding: 20px;
   width: 700px; }
   .info button {
-    width: 200px; }
+    width: 200px;
+    margin-right: 10px; }
 
 .container {
   height: 100vh;
@@ -17,12 +18,13 @@ p {
   padding: 20px;
   margin: 0; }
   .container input {
+    border: 2px solid #00BFFF;
     padding: 10px;
     border-radius: 10px;
     margin-right: 20px;
     width: 250px; }
     .container input:focus {
-      border: none;
+      border-color: #ff9a62;
       outline: none; }
   .container .button-main {
     width: 150px;
@@ -110,13 +112,14 @@ ul {
   content: counter(li); }
 
 table.objectDetails {
+  width: 100%;
   margin-bottom: 20px;
   font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
   font-size: 14px;
   text-align: left;
   border-collapse: collapse;
   border-radius: 20px;
-  box-shadow: 0 0 0 10px #F2906B;
+  box-shadow: 0 0 0 10px #00BFFF;
   color: #452F21; }
   table.objectDetails th {
     padding: 10px 8px;
@@ -126,12 +129,14 @@ table.objectDetails {
     table.objectDetails th:last-child {
       border-top-right-radius: 20px; }
   table.objectDetails td {
-    border-top: 10px solid #F2906B;
+    border-top: 10px solid #00BFFF;
     padding: 8px;
     background: white; }
     table.objectDetails td:first-child {
       border-bottom-left-radius: 20px; }
     table.objectDetails td:last-child {
       border-bottom-right-radius: 20px; }
+  table.objectDetails input {
+    margin: 10px; }
 
 /*# sourceMappingURL=styleMainPage.css.map */

@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.ul = document.createElement('ul');
             this.ul2 = document.createElement('ul');
             this.ul.classList.add('bullet');
+            this.table = document.createElement('table');
 
         }
         // Методы прорисовки таблиц требуют объединения
@@ -36,37 +37,46 @@ document.addEventListener('DOMContentLoaded', function() {
             translator.append(buttonDetails, buttonDelete);
             this.ul.append(translator);
             }
-        pictureDetails (object, id) {
+        createTable (id) {
             this.clearField();
-            const table = document.createElement('table');
             const buttonEdit = document.createElement('button');
-            const buttonSave = document.createElement('button');
             buttonEdit.innerHTML = 'Редактировать';
-            buttonSave.innerHTML = 'Сохранить';
+            buttonEdit.id = 'edit';
             buttonEdit.classList.add('btn', 'btn-secondary');
-            buttonSave.classList.add('btn', 'btn-secondary');
-            table.classList.add('objectDetails');
-            table.id = id;
+            this.table.classList.add('objectDetails');
+            this.table.id = id;
             const menu1 = document.createElement('tr');
             const menu2 = document.createElement('tr');
             const subMenu1 = document.createElement('th');
             const subMenu2 = document.createElement('th');
             const subMenu3 = document.createElement('th');
-            const subMenu4 = document.createElement('td');
-            const subMenu5 = document.createElement('td');
-            const subMenu6 = document.createElement('td');
             subMenu1.innerHTML = 'Имя переводчика';
             subMenu2.innerHTML = 'Прикрепленные клиентки';
             subMenu3.innerHTML = 'Номер карты';
-            subMenu4.innerHTML = object.name;
-            subMenu5.innerHTML = object.clients;
-            subMenu6.innerHTML = object.cardNumber;
-            this.info.append(table, buttonEdit, buttonSave);
-            table.append(menu1, menu2);
+            this.info.append(this.table, buttonEdit);
+            this.table.append(menu1, menu2);
             menu1.append(subMenu1, subMenu2, subMenu3);
-            menu2.append(subMenu4, subMenu5, subMenu6);
+        }
+        pictureDetails (data) {
+            let subMenu = document.createElement('td');
+            subMenu.innerHTML = data;
+            this.table.lastChild.append(subMenu);
 
-
+        }
+        pictureEditData () {
+            const buttonSave = document.createElement('button');
+            buttonSave.innerHTML = 'Сохранить';
+            buttonSave.id = 'save';
+            buttonSave.classList.add('btn', 'btn-secondary');
+            const input1 = document.createElement('input');
+            const input2 = document.createElement('input');
+            const input3 = document.createElement('input');
+            input1.setAttribute('placeholder', 'Ред. имя');
+            input2.setAttribute('placeholder', 'Ред. клиенток');
+            input3.setAttribute('placeholder', 'Ред. номер карты');
+            this.table.append(input1, input2, input3);
+            this.info.append(buttonSave);
+            document.getElementById('edit').remove();
 
         }
         pictureCurrencyPage = (item) => {
@@ -101,15 +111,36 @@ document.addEventListener('DOMContentLoaded', function() {
             this.info.append(input2);
             this.info.append(button2);
         }
-        clearField() {
+        showText (text) {
+            const message = document.createElement('p');
+            message.innerHTML = text;
+            message.style.textAlign = 'center';
+            message.style.opacity = '1';
+            this.info.append(message);
+            let start = Date.now();
+            let timer = setInterval(function() {
+                let timePassed = Date.now() - start;
+                if (timePassed >= 2000) {
+                    clearInterval(timer);
+                    message.remove();
+                    return;
+                }
+                draw(timePassed);
+            }, 20);
+            function draw(timePassed) {
+                message.style.opacity -= timePassed / 10000;
+            }
+        }
+        clearField () {
             this.info.innerHTML = '';
             this.ul.innerHTML = '';
+            this.table.innerHTML = '';
         }
-        clearUl() {
+        clearUl () {
             this.ul2.innerHTML = '';
         }
 
-        clearInput(input) {
+        clearInput (input) {
             input.value = '';
         }
     }
@@ -122,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
         saveTranslator () {
             let trans = Model.createObject(Translator, document.querySelector('#addTranslator').previousSibling.value);
             this.translatorsList.push(trans);
+            this.view.showText('Переводчик сохранен');
         }
         deleteTranslator (id) {
           this.translatorsList.splice(id, 1);
@@ -130,14 +162,32 @@ document.addEventListener('DOMContentLoaded', function() {
         saveClient () {
             let client = Model.createObject(Translator, document.querySelector('#addClient').previousSibling.value);
             this.clientList.push(client);
+            this.view.showText('Клиентка сохранена');
         }
         giveTranslatorList () {
             this.translatorsList.forEach((item, index) => {
                 this.view.pictureTranslatorPage(item.name, index);
             });
         }
-        giveTranslatorDetails (id) {
-                this.view.pictureDetails(this.translatorsList[id], id);
+        giveDetails (id) {
+            this.view.createTable(id);
+            let data = this.translatorsList[id];
+            for (let key in data) {
+                this.view.pictureDetails(data[key]);
+            }
+
+        }
+        saveChanges (id) {
+            let dataPlaces = this.view.table.querySelectorAll('input');
+            let i = 0;
+            for (let key in this.translatorsList[id]) {
+                this.translatorsList[id][key] = dataPlaces[i].value;
+                i++;
+            }
+            this.giveDetails(id);
+
+
+
         }
         giveClientList () {
             this.clientList.forEach((item) => {
@@ -171,6 +221,10 @@ document.addEventListener('DOMContentLoaded', function() {
         clickButtons = (event) => {
             if (event.target.tagName === 'BUTTON') {
                 switch (event.target.id) {
+                    case 'main' :
+                        this.model.view.buttonPressed(event);
+                        this.model.getCurrency();
+                        break;
                     case 'addObj' :
                         this.model.view.buttonPressed(event);
                         this.model.view.addTranslatorMenu();
@@ -183,11 +237,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.model.view.buttonPressed(event);
                         this.model.giveClientList(event);
                         break;
-                    case 'currency' :
-                        this.model.view.buttonPressed(event);
-                        this.model.getCurrency();
-                        break;
-
                 }
             }
         }
@@ -202,7 +251,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.model.saveClient();
                         this.model.view.clearInput(document.querySelector('#addClient').previousSibling);
                         break;
+                    case 'edit' :
+                        this.model.view.pictureEditData();
+                        break;
+                    case 'save' :
+                        this.model.saveChanges(event.target.previousSibling.id);
                 }
+
                 switch (event.target.getAttribute('name')) {
                     case 'delete' :
                         this.model.view.buttonPressed(event);
@@ -210,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         break;
                     case 'details' :
                         this.model.view.clearUl();
-                        this.model.giveTranslatorDetails(event.target.parentNode.id, event.target   );
+                        this.model.giveDetails(event.target.parentNode.id);
                         break;
                 }
 
