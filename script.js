@@ -20,8 +20,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         }
         // Методы прорисовки таблиц требуют объединения
-        pictureTranslatorPage = (item, index) => {
+        pictureTranslatorPage = (item, index, dataType) => {
             this.info.append(this.ul);
+            this.ul.setAttribute('data-type', dataType);
             const translator = document.createElement('li');
             const buttonDetails = document.createElement('button');
             const buttonDelete = document.createElement('button');
@@ -81,11 +82,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         pictureCurrencyPage = (item) => {
             this.info.append(this.ul);
+            this.ul.removeAttribute('data-type');
             const currency = document.createElement('li');
             currency.innerHTML = item;
             this.ul.append(currency);
         }
         buttonPressed = (event) => {
+                event.preventDefault();
                 this.clearField();
                 for (let i = 0; i < this.buttonCollection.length; i++) {
                     this.buttonCollection[i].classList.remove(`button-active`);
@@ -166,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         giveTranslatorList () {
             this.translatorsList.forEach((item, index) => {
-                this.view.pictureTranslatorPage(item.name, index);
+                this.view.pictureTranslatorPage(item.name, index, 'translators');
             });
         }
         giveDetails (id) {
@@ -190,8 +193,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         }
         giveClientList () {
-            this.clientList.forEach((item) => {
-                this.view.pictureTranslatorPage(item.name);
+            this.clientList.forEach((item, index) => {
+                this.view.pictureTranslatorPage(item.name, index, 'clients');
             });
         }
         getCurrency () {
