@@ -1,0 +1,26 @@
+{
+  "name": "calculate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "gulp": "^4.0.2",
+    "node": "^15.4.0",
+    "nodemon": "^2.0.6"
+  },
+  "scripts": {
+    "start": "node nodeJS/index.js",
+    "dev": "nodemon nodeJS/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stilet00/calculate.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stilet00/calculate/issues"
+  },
+  "homepage": "https://github.com/stilet00/calculate#readme"
+}
