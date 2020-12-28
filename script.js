@@ -37,8 +37,8 @@ document.addEventListener('DOMContentLoaded', function() {
             translator.innerHTML = item;
             translator.append(buttonDetails, buttonDelete);
             this.ul.append(translator);
-            }
-        createTable (id) {
+        }
+        createTable (id, dataType) {
             this.clearField();
             const buttonEdit = document.createElement('button');
             buttonEdit.innerHTML = 'Редактировать';
@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
             buttonEdit.classList.add('btn', 'btn-secondary');
             this.table.classList.add('objectDetails');
             this.table.id = id;
+            this.table.setAttribute('data-type', dataType)
             const menu1 = document.createElement('tr');
             const menu2 = document.createElement('tr');
             const subMenu1 = document.createElement('th');
@@ -88,14 +89,14 @@ document.addEventListener('DOMContentLoaded', function() {
             this.ul.append(currency);
         }
         buttonPressed = (event) => {
-                event.preventDefault();
-                this.clearField();
-                for (let i = 0; i < this.buttonCollection.length; i++) {
-                    this.buttonCollection[i].classList.remove(`button-active`);
-                }
-                event.target.classList.toggle('button-active');
-
+            event.preventDefault();
+            this.clearField();
+            for (let i = 0; i < this.buttonCollection.length; i++) {
+                this.buttonCollection[i].classList.remove(`button-active`);
             }
+            event.target.classList.toggle('button-active');
+
+        }
         addTranslatorMenu = () => {
             const input = document.createElement('input');
             const input2 = document.createElement('input');
@@ -146,6 +147,11 @@ document.addEventListener('DOMContentLoaded', function() {
         clearInput (input) {
             input.value = '';
         }
+        pictureText(text) {
+            const header = document.createElement('h1');
+            header.innerHTML = text;
+            this.info.append(header);
+        }
     }
     class Model {
         constructor (view) {
@@ -159,8 +165,8 @@ document.addEventListener('DOMContentLoaded', function() {
             this.view.showText('Переводчик сохранен');
         }
         deleteTranslator (id) {
-          this.translatorsList.splice(id, 1);
-          this.giveTranslatorList();
+            this.translatorsList.splice(id, 1);
+            this.giveTranslatorList();
         }
         saveClient () {
             let client = Model.createObject(Translator, document.querySelector('#addClient').previousSibling.value);
@@ -172,25 +178,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.view.pictureTranslatorPage(item.name, index, 'translators');
             });
         }
-        giveDetails (id) {
-            this.view.createTable(id);
-            let data = this.translatorsList[id];
-            for (let key in data) {
-                this.view.pictureDetails(data[key]);
-            }
+        giveDetails (id, dataType) {
+            if (dataType === 'translators') {
+                this.view.createTable(id, dataType);
+                let data = this.translatorsList[id];
+                for (let key in data) {
+                    this.view.pictureDetails(data[key]);
+                }
+            } else if (dataType === 'clients') {
+                this.view.createTable(id, dataType);
+                let data = this.clientList[id];
+                for (let key in data) {
+                    this.view.pictureDetails(data[key]);
+                }
 
+            }
         }
-        saveChanges (id) {
+        saveChanges (id, dataType) {
             let dataPlaces = this.view.table.querySelectorAll('input');
             let i = 0;
-            for (let key in this.translatorsList[id]) {
-                this.translatorsList[id][key] = dataPlaces[i].value;
-                i++;
+            if (dataType === 'translators') {
+                for (let key in this.translatorsList[id]) {
+                    this.translatorsList[id][key] = dataPlaces[i].value;
+                    i++;
+                }
+            } else if (dataType === 'clients') {
+                for (let key in this.clientList[id]) {
+                    this.clientList[id][key] = dataPlaces[i].value;
+                    i++;
+                }
             }
-            this.giveDetails(id);
-
-
-
+            this.giveDetails(id, dataType);
         }
         giveClientList () {
             this.clientList.forEach((item, index) => {
@@ -206,10 +224,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (i === 2) {
                             this.view.pictureCurrencyPage(`Курс payoneer равен ${obj[0].buy - 1}`);
                         } else {
-                        this.view.pictureCurrencyPage(`${obj[i].ccy} / ${obj[i].base_ccy} = ${obj[i].buy} / ${obj[i].sale}`);
+                            this.view.pictureCurrencyPage(`${obj[i].ccy} / ${obj[i].base_ccy} = ${obj[i].buy} / ${obj[i].sale}`);
                         }
-                        }
-                        })
+                    }
+                })
+        }
+        sendGet() {
+            let promise = fetch('http://localhost:3000/');
+            promise
+                .then(success => success.text())
+                .then(text => this.view.pictureText(text))
+                .catch(err => this.view.pictureText(err));
         }
 
         static createObject = (className, name) => {
@@ -239,6 +264,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     case 'clients' :
                         this.model.view.buttonPressed(event);
                         this.model.giveClientList(event);
+                        console.log(event.target.id);
+                        break;
+                    case 'statistics' :
+                        this.model.view.buttonPressed(event);
+                        console.log(event.target.id);
+                        this.model.sendGet();
                         break;
                 }
             }
@@ -258,7 +289,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.model.view.pictureEditData();
                         break;
                     case 'save' :
-                        this.model.saveChanges(event.target.previousSibling.id);
+                        this.model.saveChanges(event.target.previousSibling.id, event.target.previousSibling.dataset.type);
+                        break;
+
                 }
 
                 switch (event.target.getAttribute('name')) {
@@ -268,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         break;
                     case 'details' :
                         this.model.view.clearUl();
-                        this.model.giveDetails(event.target.parentNode.id);
+                        this.model.giveDetails(event.target.parentNode.id, event.target.parentNode.parentNode.dataset.type);
                         break;
                 }
 
