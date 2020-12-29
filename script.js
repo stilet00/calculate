@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
         }
         sendGet() {
-            let promise = fetch('http://localhost:3000/');
+            let promise = fetch('http://localhost:3333/translators');
             promise
                 .then(success => success.text())
                 .then(text => this.view.pictureText(text))
