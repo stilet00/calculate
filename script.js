@@ -185,27 +185,31 @@ document.addEventListener('DOMContentLoaded', function() {
             saveList(dataBaseName);
         }
 
-
+        sendDataBase (dataBaseName) {
+            let promise = fetch(this.url + 'send/' + dataBaseName)
+        }
 
         saveTranslator () {
             let trans = Model.createObject(Translator, document.querySelector('#addTranslator').previousSibling.value);
             this.translatorsList.push(trans);
             this.view.showText('Переводчик сохранен');
         }
-        // deleteTranslator (id) {
-        //     this.translatorsList.splice(id, 1);
-        //     this.giveTranslatorList();
-        // }
         deleteTranslator (id) {
-            console.log(id);
-            let promise = fetch('http://localhost:3333/' + 'delete/' + id, {
-                method: 'DELETE'
-            });
-            promise
-                .then(res => console.log(res))
-                .catch(err => console.log(err));
-
+            this.translatorsList = this.translatorsList.filter((item) => {
+                return item._id !== id;
+            })
+            this.giveTranslatorList();
         }
+        // deleteTranslator (id) {
+        //     console.log(id);
+        //     let promise = fetch('http://localhost:3333/' + 'delete/' + id, {
+        //         method: 'DELETE'
+        //     });
+        //     promise
+        //         .then(res => console.log(res))
+        //         .catch(err => console.log(err));
+        //
+        // }
         saveClient () {
             let client = Model.createObject(Translator, document.querySelector('#addClient').previousSibling.value);
             this.clientList.push(client);
@@ -219,7 +223,9 @@ document.addEventListener('DOMContentLoaded', function() {
         giveDetails (id, dataType) {
             if (dataType === 'translators') {
                 this.view.createTable(id, dataType);
-                let data = this.translatorsList[id];
+                let data = this.translatorsList.find((item) => {
+                    return item._id === id;
+                });
                 for (let key in data) {
                     if (key !== '_id') {
                         this.view.pictureDetails(data[key]);
@@ -237,26 +243,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         saveChanges = (id, dataType) => {
+            console.log(id);
             let dataPlaces = this.view.table.querySelectorAll('input');
             let i = 0;
             if (dataType === 'translators') {
-                for (let key in this.translatorsList[id]) {
-                    if (key !== "_id") {
-                        this.translatorsList[id][key] = dataPlaces[i].value;
+                let data = this.translatorsList.find((item) => {
+                    return item._id === id;
+                });
+
+                for (let key in data) {
+                    if (key !== '_id' && key !== 'clients') {
+                        data[key] = dataPlaces[i].value;
                         i++;
-                    } else if (key === 'clients') {
+                    } if (key === 'clients') {
                         let array = dataPlaces[i].value.split(' ');
-                        this.translatorsList[id][key] = array;
-                    }
-                }
-            } else if (dataType === 'clients') {
-                for (let key in this.clientList[id]) {
-                    if (key !== "_id") {
-                        this.clientList[id][key] = dataPlaces[i].value;
+                        data[key] = array;
                         i++;
                     }
                 }
             }
+            console.log(this.translatorsList);
             this.giveDetails(id, dataType);
         }
         giveClientList () {

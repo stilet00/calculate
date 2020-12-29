@@ -15,8 +15,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extented: true}));
 
 app.get(url1 + 'translators', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     db.collection('translators').find().toArray((err, docs) => {
         if (err) {
             console.log(err);
@@ -25,10 +25,16 @@ app.get(url1 + 'translators', (req, res) => {
         res.send(docs);
     })
 })
+app.post(url1 + 'savedata', (req, res) => {
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    db.collection('translators')
+})
+
 //получаем итем
 app.get(url1 + ':id', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     db.collection('translators').findOne({_id: ObjectId(req.params.id)}, (err, docs) => {
         if (err) {
             console.log(err);
@@ -39,8 +45,8 @@ app.get(url1 + ':id', (req, res) => {
 })
 //получаем итем
 app.delete(url1 + 'delete/' + ':id', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     db.collection('translators').deleteOne({_id: ObjectId(req.params.id)}, (err, docs) => {
         if (err) {
             console.log(err);
