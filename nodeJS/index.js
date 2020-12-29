@@ -1,5 +1,4 @@
 let express = require('express');
-let fs = require('fs');
 let MongoClient = require('mongodb').MongoClient;
 let ObjectId = require('mongodb').ObjectID;
 let bodyParser = require('body-parser');
@@ -15,11 +14,6 @@ let client = new MongoClient(url2);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extented: true}));
 
-// app.get(url1, (req, res) => {
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept')
-//     res.send('HELLO')
-// })
 app.get(url1 + 'translators', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
@@ -31,6 +25,31 @@ app.get(url1 + 'translators', (req, res) => {
         res.send(docs);
     })
 })
+//получаем итем
+app.get(url1 + ':id', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
+    db.collection('translators').findOne({_id: ObjectId(req.params.id)}, (err, docs) => {
+        if (err) {
+            console.log(err);
+            return res.sendStatus(500);
+        }
+        res.send(docs);
+    })
+})
+//получаем итем
+app.delete(url1 + 'delete/' + ':id', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
+    db.collection('translators').deleteOne({_id: ObjectId(req.params.id)}, (err, docs) => {
+        if (err) {
+            console.log(err);
+            return res.sendStatus(500);
+        }
+        res.sendStatus(200);
+    })
+})
+
 
 app.post(url1 + 'add', (req, res) => {
     let translator = {

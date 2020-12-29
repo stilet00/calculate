@@ -158,15 +158,53 @@ document.addEventListener('DOMContentLoaded', function() {
             this.view= view;
             this.translatorsList = [];
             this.clientList = [];
+            this.url = 'http://localhost:3333/'
         }
+        loadDataBase (dataBaseName) {
+            let receiveItems = async () => {
+                const rsp = await fetch(this.url + dataBaseName);
+                return rsp.json();
+            }
+            let saveList = async (dataBaseName) => {
+                if (dataBaseName === "translators") {
+                    try {
+                        this.translatorsList = await receiveItems();
+                    } catch (err) {
+
+                        console.error(err);
+                    }
+                } else {
+                    try {
+                        this.clientList = await receiveItems();
+                    } catch (err) {
+
+                        console.error(err);
+                    }
+                }
+            }
+            saveList(dataBaseName);
+        }
+
+
+
         saveTranslator () {
             let trans = Model.createObject(Translator, document.querySelector('#addTranslator').previousSibling.value);
             this.translatorsList.push(trans);
             this.view.showText('Переводчик сохранен');
         }
+        // deleteTranslator (id) {
+        //     this.translatorsList.splice(id, 1);
+        //     this.giveTranslatorList();
+        // }
         deleteTranslator (id) {
-            this.translatorsList.splice(id, 1);
-            this.giveTranslatorList();
+            console.log(id);
+            let promise = fetch('http://localhost:3333/' + 'delete/' + id, {
+                method: 'DELETE'
+            });
+            promise
+                .then(res => console.log(res))
+                .catch(err => console.log(err));
+
         }
         saveClient () {
             let client = Model.createObject(Translator, document.querySelector('#addClient').previousSibling.value);
@@ -175,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         giveTranslatorList () {
             this.translatorsList.forEach((item, index) => {
-                this.view.pictureTranslatorPage(item.name, index, 'translators');
+                this.view.pictureTranslatorPage(item.name, item._id, 'translators');
             });
         }
         giveDetails (id, dataType) {
@@ -183,29 +221,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.view.createTable(id, dataType);
                 let data = this.translatorsList[id];
                 for (let key in data) {
-                    this.view.pictureDetails(data[key]);
+                    if (key !== '_id') {
+                        this.view.pictureDetails(data[key]);
+                    }
                 }
             } else if (dataType === 'clients') {
                 this.view.createTable(id, dataType);
                 let data = this.clientList[id];
                 for (let key in data) {
-                    this.view.pictureDetails(data[key]);
+                    if (key !== '_id') {
+                        this.view.pictureDetails(data[key]);
+                    }
                 }
 
             }
         }
-        saveChanges (id, dataType) {
+        saveChanges = (id, dataType) => {
             let dataPlaces = this.view.table.querySelectorAll('input');
             let i = 0;
             if (dataType === 'translators') {
                 for (let key in this.translatorsList[id]) {
-                    this.translatorsList[id][key] = dataPlaces[i].value;
-                    i++;
+                    if (key !== "_id") {
+                        this.translatorsList[id][key] = dataPlaces[i].value;
+                        i++;
+                    } else if (key === 'clients') {
+                        let array = dataPlaces[i].value.split(' ');
+                        this.translatorsList[id][key] = array;
+                    }
                 }
             } else if (dataType === 'clients') {
                 for (let key in this.clientList[id]) {
-                    this.clientList[id][key] = dataPlaces[i].value;
-                    i++;
+                    if (key !== "_id") {
+                        this.clientList[id][key] = dataPlaces[i].value;
+                        i++;
+                    }
                 }
             }
             this.giveDetails(id, dataType);
@@ -228,13 +277,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                 })
-        }
-        sendGet() {
-            let promise = fetch('http://localhost:3333/translators');
-            promise
-                .then(success => success.text())
-                .then(text => this.view.pictureText(text))
-                .catch(err => this.view.pictureText(err));
         }
 
         static createObject = (className, name) => {
@@ -259,17 +301,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         break;
                     case 'transl' :
                         this.model.view.buttonPressed(event);
-                        this.model.giveTranslatorList(event);
+                        this.model.giveTranslatorList();
                         break;
                     case 'clients' :
                         this.model.view.buttonPressed(event);
                         this.model.giveClientList(event);
-                        console.log(event.target.id);
                         break;
                     case 'statistics' :
                         this.model.view.buttonPressed(event);
-                        console.log(event.target.id);
-                        this.model.sendGet();
+                        this.model.loadDataBase("translators");
                         break;
                 }
             }
