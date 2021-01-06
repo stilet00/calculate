@@ -184,9 +184,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             saveList(dataBaseName);
         }
-
-        sendDataBase (dataBaseName) {
-            let promise = fetch(this.url + 'send/' + dataBaseName)
+        sendData (dataBaseName, _id, name, clients, cardNumber) {
+            let user = {
+                name: name,
+                clients: clients,
+                cardNumber: cardNumber
+            }
+            let promise = fetch(this.url + dataBaseName + '/' + _id, {
+                method: 'PUT',
+                headers: {
+                    'Content-type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(user)
+            });
+            promise.then(res => alert("translator edited")).catch(e => alert(e));
         }
 
         saveTranslator () {
@@ -243,7 +254,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         saveChanges = (id, dataType) => {
-            console.log(id);
             let dataPlaces = this.view.table.querySelectorAll('input');
             let i = 0;
             if (dataType === 'translators') {
@@ -261,8 +271,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         i++;
                     }
                 }
+                this.sendData(dataType, id, data.name, data.clients, data.cardNumber);
             }
-            console.log(this.translatorsList);
             this.giveDetails(id, dataType);
         }
         giveClientList () {
