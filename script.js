@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         }
         // Методы прорисовки таблиц требуют объединения
-        pictureTranslatorPage = (item, index, dataType) => {
+        pictureListItems = (item, index, dataType) => {
             this.info.append(this.ul);
             this.ul.setAttribute('data-type', dataType);
             const translator = document.createElement('li');
@@ -156,8 +156,6 @@ document.addEventListener('DOMContentLoaded', function() {
     class Model {
         constructor (view) {
             this.view= view;
-            this.translatorsList = [];
-            this.clientList = [];
             this.url = 'http://localhost:3333/'
         }
         loadDataBase (dataBaseName) {
@@ -200,16 +198,116 @@ document.addEventListener('DOMContentLoaded', function() {
             promise.then(res => alert("translator edited")).catch(e => alert(e));
         }
 
-        saveTranslator () {
-            let trans = Model.createObject(Translator, document.querySelector('#addTranslator').previousSibling.value);
-            this.translatorsList.push(trans);
+        saveTranslator (name) { //working method
+            let translator = {
+                name: name,
+            }
+
+            let promise = fetch(this.url + "add", {
+                method: "POST",
+                headers: {
+                    'Content-type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(translator)
+            });
+            promise
+                .then(res => {
+                    if (res.ok && res.status === 200) {
+                        return res.text();
+                    } else {
+                        return Promise.reject(res.status);
+                    }
+                })
+                .catch(err => console.log(err))
+
+
             this.view.showText('Переводчик сохранен');
         }
-        deleteTranslator (id) {
-            this.translatorsList = this.translatorsList.filter((item) => {
-                return item._id !== id;
+        saveClient (name) {
+            let client = {
+                name: name,
+            }
+
+            let promise = fetch(this.url + "addclient", {
+                method: "POST",
+                headers: {
+                    'Content-type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(client)
+            });
+            promise
+                .then(res => {
+                    if (res.ok && res.status === 200) {
+                        return res.text();
+                    } else {
+                        return Promise.reject(res.status);
+                    }
+                })
+                .catch(err => console.log(err))
+
+            this.view.showText('Клиентка сохранена');
+        }
+        giveTranslatorList () { //working method
+            let promise = fetch(this.url + "translators");
+            promise
+                .then(res => {
+                    if (res.ok && res.status === 200) {
+                        return res.json();
+                    } else {
+                        return Promise.reject(res.status);
+                    }
+                })
+                .then(res => {
+                    res.forEach(item => {
+                        this.view.pictureListItems(item.name, item._id, 'translators');
+                    })
+                })
+                .catch(err => console.log(err))
+
+        }
+        giveClientList () {
+            let promise = fetch(this.url + "clients");
+            promise
+                .then(res => {
+                    if (res.ok && res.status === 200) {
+                        return res.json();
+                    } else {
+                        return Promise.reject(res.status);
+                    }
+                })
+                .then(res => {
+                    res.forEach(item => {
+                        this.view.pictureListItems(item.name, item._id, 'clients');
+                    })
+                })
+                .catch(err => console.log(err))
+        }
+        deleteItem (id, collection) {
+            let col = {
+                name: collection
+            }
+            let promise = fetch(this.url + id, {
+                method: "DELETE",
+                headers: {
+                    'Content-type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(col)
             })
-            this.giveTranslatorList();
+                .then(res => {
+                    if (res.ok && res.status === 200) {
+                        return res.text();
+                    } else {
+                        return Promise.reject(res.status);
+                    }
+                })
+                .then(res => {
+                    if (collection === "translators") {
+                        this.giveTranslatorList();
+                    } else {
+                        this.giveClientList();
+                    }
+                })
+                .catch(err => console.log(err))
         }
         // deleteTranslator (id) {
         //     console.log(id);
@@ -221,16 +319,8 @@ document.addEventListener('DOMContentLoaded', function() {
         //         .catch(err => console.log(err));
         //
         // }
-        saveClient () {
-            let client = Model.createObject(Translator, document.querySelector('#addClient').previousSibling.value);
-            this.clientList.push(client);
-            this.view.showText('Клиентка сохранена');
-        }
-        giveTranslatorList () {
-            this.translatorsList.forEach((item, index) => {
-                this.view.pictureTranslatorPage(item.name, item._id, 'translators');
-            });
-        }
+
+
         giveDetails (id, dataType) {
             if (dataType === 'translators') {
                 this.view.createTable(id, dataType);
@@ -275,11 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             this.giveDetails(id, dataType);
         }
-        giveClientList () {
-            this.clientList.forEach((item, index) => {
-                this.view.pictureTranslatorPage(item.name, index, 'clients');
-            });
-        }
+
         getCurrency () {
             let promise = fetch("https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5");
             promise
@@ -334,11 +420,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (event.target.tagName === 'BUTTON') {
                 switch (event.target.id) {
                     case 'addTranslator' :
-                        this.model.saveTranslator();
+                        this.model.saveTranslator(event.target.previousSibling.value);
                         this.model.view.clearInput(document.querySelector('#addTranslator').previousSibling);
                         break;
                     case 'addClient' :
-                        this.model.saveClient();
+                        this.model.saveClient(event.target.previousSibling.value);
                         this.model.view.clearInput(document.querySelector('#addClient').previousSibling);
                         break;
                     case 'edit' :
@@ -352,8 +438,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 switch (event.target.getAttribute('name')) {
                     case 'delete' :
+                        this.model.deleteItem(event.target.parentNode.id, event.target.parentNode.parentNode.dataset.type);
                         this.model.view.buttonPressed(event);
-                        this.model.deleteTranslator(event.target.parentNode.id);
                         break;
                     case 'details' :
                         this.model.view.clearUl();
