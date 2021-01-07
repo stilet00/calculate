@@ -309,40 +309,53 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .catch(err => console.log(err))
         }
-        // deleteTranslator (id) {
-        //     console.log(id);
-        //     let promise = fetch('http://localhost:3333/' + 'delete/' + id, {
-        //         method: 'DELETE'
-        //     });
-        //     promise
-        //         .then(res => console.log(res))
-        //         .catch(err => console.log(err));
-        //
-        // }
 
-
-        giveDetails (id, dataType) {
-            if (dataType === 'translators') {
-                this.view.createTable(id, dataType);
-                let data = this.translatorsList.find((item) => {
-                    return item._id === id;
-                });
-                for (let key in data) {
-                    if (key !== '_id') {
-                        this.view.pictureDetails(data[key]);
-                    }
-                }
-            } else if (dataType === 'clients') {
-                this.view.createTable(id, dataType);
-                let data = this.clientList[id];
-                for (let key in data) {
-                    if (key !== '_id') {
-                        this.view.pictureDetails(data[key]);
-                    }
-                }
-
+            giveDetails (id, collection) {
+                this.view.createTable(id, collection); //table will be different if collection === 'clients'
+                let promise = fetch(this.url + collection + '/' + id);
+                promise
+                    .then(res => {
+                        if (res.ok && res.status === 200) {
+                            return res.json();
+                        } else {
+                            return Promise.reject(res.status);
+                        }
+                    })
+                    .then(res => {
+                        for (let key in res) {
+                            if (key !== '_id') {
+                                this.view.pictureDetails(res[key]);
+                            }
+                        }
+                    })
+                    .catch(err => console.log(err))
             }
-        }
+
+
+
+
+        // giveDetails (id, dataType) {
+        //     if (dataType === 'translators') {
+        //         this.view.createTable(id, dataType);
+        //         let data = this.translatorsList.find((item) => {
+        //             return item._id === id;
+        //         });
+        //         for (let key in data) {
+        //             if (key !== '_id') {
+        //                 this.view.pictureDetails(data[key]);
+        //             }
+        //         }
+        //     } else if (dataType === 'clients') {
+        //         this.view.createTable(id, dataType);
+        //         let data = this.clientList[id];
+        //         for (let key in data) {
+        //             if (key !== '_id') {
+        //                 this.view.pictureDetails(data[key]);
+        //             }
+        //         }
+        //
+        //     }
+        // }
         saveChanges = (id, dataType) => {
             let dataPlaces = this.view.table.querySelectorAll('input');
             let i = 0;

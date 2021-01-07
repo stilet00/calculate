@@ -35,6 +35,16 @@ app.get(url1 + 'clients', (req, res) => { //working api
         res.send(docs);
     })
 })
+app.get(url1 + 'translators/' + ':id' , (req, res) => {
+    db.collection('translators').findOne({_id: ObjectId(req.params.id)}, (err, docs) => {
+        if (err) {
+            res.sendStatus(500);
+        } else {
+            res.send(docs);
+        }
+
+    })
+})
 app.post(url1 + 'add', (req, res) => { //working api
     let translator = {
         name: req.body.name,
