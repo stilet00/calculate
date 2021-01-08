@@ -22,17 +22,11 @@ app.use(function(req, res, next) {
 app.get(url1 + 'translators', (req, res) => { //working api
     db.collection('translators').find().toArray((err, docs) => {
         if (err) {
-            return res.sendStatus(500);
+            res.sendStatus(500);
+        } else {
+            res.send(docs);
         }
-        res.send(docs);
-    })
-})
-app.get(url1 + 'clients', (req, res) => { //working api
-    db.collection('clients').find().toArray((err, docs) => {
-        if (err) {
-            return res.sendStatus(500);
-        }
-        res.send(docs);
+
     })
 })
 app.get(url1 + 'translators/' + ':id' , (req, res) => {
@@ -60,19 +54,7 @@ app.post(url1 + 'add', (req, res) => { //working api
     })
 
 })
-app.post(url1 + 'addclient', (req, res) => { //working api
-    let client = {
-        name: req.body.name,
-    }
-    db.collection('clients').insertOne(client, (err, result) => {
-        if (err) {
-            res.sendStatus(500);
-        } else {
-            res.sendStatus(200);
-        }
-    })
 
-})
 app.delete(url1 +':id', (req, res) => {
     db.collection(req.body.name).deleteOne({_id: ObjectId(req.params.id)}, (err) => {
         if (err) {
@@ -84,16 +66,18 @@ app.delete(url1 +':id', (req, res) => {
     })
 })
 
-app.put(url1 + 'translators/' + ':id', (req, res) => {
-    db.collection('translators').updateOne({_id: ObjectId(req.params.id)}, {$set: {name: req.body.name,
-            clients: req.body.clients,
+app.put(url1 + ':id', (req, res) => {
+    db.collection('translators').updateOne({_id: ObjectId(req.params.id)}, {$set: {
+            name: req.body.name,
+            clients: req.body.clientList,
             cardNumber: req.body.cardNumber
         }}, (err) => {
         if (err) {
-            console.log(err);
-            return res.sendStatus(500);
+            res.sendStatus(500);
+        } else {
+            res.sendStatus(200);
         }
-        res.sendStatus(200);
+
 
     })
 })
@@ -102,10 +86,10 @@ app.put(url1 + 'translators/' + ':id', (req, res) => {
 app.get(url1 + ':id', (req, res) => {
     db.collection('translators').findOne({_id: ObjectId(req.params.id)}, (err, docs) => {
         if (err) {
-            console.log(err);
-            return res.sendStatus(500);
+            res.sendStatus(500);
+        } else {
+            res.send(docs);
         }
-        res.send(docs);
     })
 })
 //получаем итем
