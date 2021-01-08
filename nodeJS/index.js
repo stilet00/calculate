@@ -3,13 +3,12 @@ let MongoClient = require('mongodb').MongoClient;
 let ObjectId = require('mongodb').ObjectID;
 let bodyParser = require('body-parser');
 let db;
-
-
 let url1 = '/';
 let url2 = 'mongodb://localhost:27017'
 let dbName = 'myProject';
 let app = express();
 let client = new MongoClient(url2);
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extented: true}));
@@ -19,6 +18,25 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Methods", "*")
     next();
 })
+
+
+
+
+//API для index.html
+app.post(url1 + 'login', (request, res) => {
+    if ((request.body.login==='admin')&&(request.body.password==='111')) {
+        request.session.authorized = true;
+        request.session.username = request.body.login;
+        console.log('admin is here!');
+        res.sendStatus('200')
+    }
+
+})
+
+
+
+
+//API для MainPageHTML
 app.get(url1 + 'translators', (req, res) => { //working api
     db.collection('translators').find().toArray((err, docs) => {
         if (err) {
