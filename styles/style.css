@@ -18,9 +18,8 @@
     letter-spacing: 2px;
     text-align: center;
     margin-bottom: 5px;
-    margin-top: 5px; }
-    .login input:focus, .login button:focus {
-      color: black; }
+    margin-top: 5px;
+    focus-color: black; }
   .login button {
     position: relative;
     color: black;
@@ -30,7 +29,7 @@
       position: absolute;
       right: -30px;
       top: -1px;
-      content: url("image/mouse-solid.svg");
+      content: url("../image/mouse-solid.svg");
       width: 20px;
       height: 20px; }
 

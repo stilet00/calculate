@@ -98,7 +98,7 @@ ul {
       background: red !important; }
 .bullet .objList {
   margin-bottom: 20px; }
-.bullet .bullet li:before {
+.bullet:before {
   position: absolute;
   top: -0.7em;
   padding-left: 0.4em;
@@ -111,7 +111,7 @@ ul {
   counter-increment: li;
   content: counter(li); }
 
-table.objectDetails {
+table .objectDetails {
   width: 100%;
   margin-bottom: 20px;
   font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
@@ -121,22 +121,22 @@ table.objectDetails {
   border-radius: 20px;
   box-shadow: 0 0 0 10px #00BFFF;
   color: #452F21; }
-  table.objectDetails th {
+  table .objectDetails th {
     padding: 10px 8px;
     background: white; }
-    table.objectDetails th:first-child {
+    table .objectDetails th:first-child {
       border-top-left-radius: 20px; }
-    table.objectDetails th:last-child {
+    table .objectDetails th:last-child {
       border-top-right-radius: 20px; }
-  table.objectDetails td {
+  table .objectDetails td {
     border-top: 10px solid #00BFFF;
     padding: 8px;
     background: white; }
-    table.objectDetails td:first-child {
+    table .objectDetails td:first-child {
       border-bottom-left-radius: 20px; }
-    table.objectDetails td:last-child {
+    table .objectDetails td:last-child {
       border-bottom-right-radius: 20px; }
-  table.objectDetails input {
+  table .objectDetails input {
     margin: 10px; }
 
 /*# sourceMappingURL=styleMainPage.css.map */

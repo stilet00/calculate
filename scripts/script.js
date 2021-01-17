@@ -1,13 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    class Translator {
-        constructor(name) {
-            this.name = name;
-            this.clients = [];
-            this.cardNumber = 0;
-
-        }
-
-    }
     class View {
         constructor() {
             this.buttonCollection = document.querySelectorAll('button')
@@ -148,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
     class Model {
         constructor (view) {
             this.view= view;
-            this.url = 'http://localhost:3333/'
+            this.url = '/'
         }
         loadDataBase (dataBaseName) {
             let receiveItems = async () => {
@@ -368,6 +359,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         break;
                     case 'save' :
                         this.model.saveChanges(event.target.previousSibling.id, event.target.previousSibling.dataset.type);
+                        this.model.view.buttonPressed(event);
                         break;
 
                 }
